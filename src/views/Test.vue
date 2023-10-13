@@ -45,7 +45,10 @@
             checkCorrect(){
                 if(this.second != null && this.first != null){
                     if(this.second == this.first){
+                        let data = this.randomElements.find((b) => b.id == this.first);
+                        data.done=true;
                         this.correctList.push(this.first);
+                        this.$emit('updateSuccess', data);
                     }else{
                         this.wrongList.push(this.first);
                     }
@@ -129,6 +132,10 @@
         text-transform: capitalize;
         text-decoration: none;
         color: rgba(0,0,0,0.8);
+    }
+    .word-list li a.active{
+        border: 1px solid rgba(0,0,0,0.1);
+        background-color: rgba(246, 246, 246, 0.815);
     }
     .word-list li a.wrong{
         border: 1px solid red;

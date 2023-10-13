@@ -5,12 +5,8 @@
                 <app-navbar />
             </div>
             <div class="col-lg-12 mt-3">
-                <router-view 
-                        :randomElements="randomElements" 
-                        @inputSubmit="addData($event)" 
-                        :itemsForAdd="itemsForAdd"
-                        @deleteAdd="deleteDataAdd($event)" 
-                    />
+                <router-view :randomElements="randomElements" @inputSubmit="addData($event)" :itemsForAdd="itemsForAdd"
+                    @deleteAdd="deleteDataAdd($event)" @updateSuccess="updateData($event)"/>
             </div>
         </div>
     </div>
@@ -29,13 +25,14 @@ export default {
     },
     computed: {
         randomElements() {
-            const shuffledList = this.shuffleArray(this.list);
+            let filtered = this.itemsForAdd.filter((e) => (!e.done) ? true : false);
+            const shuffledList = this.shuffleArray(filtered);
             return shuffledList.slice(0, 7);
         }
     },
     methods: {
         shuffleArray(array) {
-            let shuffled = this.itemsForAdd.slice(0), i = this.itemsForAdd.length, temp, index;
+            let shuffled = array.slice(0), i = array.length, temp, index;
             while (i-- > 0) {
                 index = Math.floor((i + 1) * Math.random());
                 temp = shuffled[index];
@@ -43,6 +40,39 @@ export default {
                 shuffled[i] = temp;
             }
             return shuffled;
+        },
+        updateData(d) {
+            const db = getDB(); 
+            const transaction = db.transaction(["words"], "readwrite");
+            const objectStore = transaction.objectStore("words");
+
+            const getRequest = objectStore.get(d.id);
+
+            getRequest.onsuccess = (event) => {
+                const data = event.target.result;
+
+                if (data) {
+                    data.name = d.name;
+                    data.equal = d.equal;
+                    data.done = d.done ?? false;
+
+                    const putRequest = objectStore.put(data);
+
+                    putRequest.onsuccess = () => {
+                        console.log("Veri başarıyla güncellendi");
+                    };
+
+                    putRequest.onerror = () => {
+                        console.error("Veri güncellenirken bir hata oluştu.");
+                    };
+                } else {
+                    console.error("Belirtilen ID ile eşleşen veri bulunamadı.");
+                }
+            };
+
+            getRequest.onerror = () => {
+                console.error("Veri alınırken bir hata oluştu.");
+            };
         },
         deleteDataAdd(id) {
             const db = getDB();
