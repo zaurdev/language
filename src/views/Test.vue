@@ -25,8 +25,10 @@
             </ul>
         </div>
         <div class="d-flex justify-content-center mt-5">
-            <button class="btn btn-primary mr-2 py-2 px-4"> <i class="fas fa-refresh mr-1"></i> Sıfırla</button>
-            <button class="btn btn-primary ml-2"> <i class="fas fa-add mr-1"></i> Yeni tur</button>
+            <div class="d-flex justify-content-center mt-5">
+                <button class="btn btn-primary mr-2 py-2 px-4" @click="refresh();first= null; second= null;"> <i class="fas fa-refresh mr-1"></i> Sıfırla</button>
+                <button class="btn btn-primary ml-2" @click.prevent="reload()"> <i class="fas fa-add mr-1"></i> Yeni tur</button>
+            </div>
         </div>
     </div>
 </template>
@@ -45,11 +47,15 @@
         data(){
             return {
                 first: null,
-                second: null,
-                disabled: []
+                second: null
             }
         },
         methods:{
+            refresh(){
+                Object.keys(this.$refs).forEach(el => {
+                    this.$refs[el][0].className = '';
+                });
+            },
             checkCorrect(){
                 if(this.second != null && this.first != null){
                     if(this.second == this.first){
