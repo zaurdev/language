@@ -3,18 +3,30 @@
         <div class="test-container">
             <ul class="word-list">
                 <li v-for="(el, index) in getTest.arrValues" :key="index" :class="{'active': first == el.id}">
-                    <a href="#"  @click.prevent="setFirst(el, index)" :class="{'active': first == el.id, 'correct': correctList.includes(el.id), 'wrong': wrongList.includes(el.id)}">{{ el.equal }}</a>
+                    <a 
+                        href="#"  
+                        @click.prevent="setFirst(el, index)" 
+                        :ref="`first-item-${el.id}`"
+                        >
+                        {{ el.equal }}
+                    </a>
                 </li>
             </ul>
             <ul class="word-list">
                 <li v-for="(el, index) in getTest.arrKeys" :key="index" :class="{'active': second == el.id}">
-                    <a href="#" @click.prevent="setSecond(el, index)" :class="{'active': second == el.id, 'correct': correctList.includes(el.id), 'wrong': wrongList.includes(el.id)}">{{ el.name }}</a>
+                    <a 
+                        href="#" 
+                        @click.prevent="setSecond(el, index)" 
+                        :ref="`second-item-${el.id}`"
+                        >
+                        {{ el.name }}
+                    </a>
                 </li>
             </ul>
         </div>
         <div class="d-flex justify-content-center mt-5">
-            <button class="btn btn-primary mr-2 py-2 px-4" @click="wrongList = []; correctList = []; first= null; second= null;"> <i class="fas fa-refresh mr-1"></i> Sıfırla</button>
-            <button class="btn btn-primary ml-2" @click.prevent="reload()"> <i class="fas fa-add mr-1"></i> Yeni tur</button>
+            <button class="btn btn-primary mr-2 py-2 px-4"> <i class="fas fa-refresh mr-1"></i> Sıfırla</button>
+            <button class="btn btn-primary ml-2"> <i class="fas fa-add mr-1"></i> Yeni tur</button>
         </div>
     </div>
 </template>
@@ -34,27 +46,12 @@
             return {
                 first: null,
                 second: null,
-                wrongList: [],
-                correctList: []
+                disabled: []
             }
         },
         methods:{
             reload(){
                 window.location.reload();
-            },
-            checkCorrect(){
-                if(this.second != null && this.first != null){
-                    if(this.second == this.first){
-                        let data = this.randomElements.find((b) => b.id == this.first);
-                        data.done=true;
-                        this.correctList.push(this.first);
-                        this.$emit('updateSuccess', data);
-                    }else{
-                        this.wrongList.push(this.first);
-                    }
-                    this.second = null;
-                    this.first = null;
-                }
             },
             shuffleArray(array) {
                 let shuffled =array.slice(0), i =array.length, temp, index;
@@ -69,12 +66,49 @@
             setSecond(el, index){
                 if(this.first){
                     this.second = el.id;
-                    this.checkCorrect();
+                    if(this.first == this.second){
+                        let secondEl = this.$refs['second-item-'+this.second];
+                        secondEl[0].classList.add('correct');
+                        secondEl[0].classList.remove('active');
+                        let firstEl = this.$refs['first-item-'+this.first];
+                        firstEl[0].classList.add('correct');
+                        firstEl[0].classList.remove('active');
+                        let first = this.first;
+                        let second = this.second;
+                        this.second = null;
+                        this.first = null;
+                        setTimeout(() => {
+                            secondEl[0].classList.remove('correct');
+                            secondEl[0].classList.remove('active');
+                            firstEl[0].classList.remove('correct');
+                            firstEl[0].classList.remove('active');
+                            firstEl[0].classList.add('disabled');
+                            secondEl[0].classList.add('disabled');
+                        }, 300);
+                    }else{
+                        let secondEl = this.$refs['second-item-'+this.second];
+                        secondEl[0].classList.add('wrong');
+                        secondEl[0].classList.remove('active');
+                        let firstEl = this.$refs['first-item-'+this.first];
+                        firstEl[0].classList.add('wrong');
+                        firstEl[0].classList.remove('active');
+                        this.second = null;
+                        this.first = null;
+                        setTimeout(() => {
+                            secondEl[0].classList.remove('wrong');
+                            secondEl[0].classList.remove('active');
+                            firstEl[0].classList.remove('wrong');
+                            firstEl[0].classList.remove('active');
+                        }, 300);
+                    }
                 }
             },
             setFirst(el, index){
-                this.first = el.id;
-                this.checkCorrect();
+                let firstEl = this.$refs['first-item-'+el.id];
+                if(firstEl[0].classList.length == 0 || !firstEl[0].classList.contains('disabled')){
+                    this.first = el.id;
+                    firstEl[0].classList.add('active');
+                }
             },
         },
         computed:{
@@ -135,7 +169,8 @@
     }
     .word-list li a.active{
         border: 1px solid rgba(0,0,0,0.1);
-        background-color: rgba(246, 246, 246, 0.815);
+        background-color: #e1eefa;
+        border-color: #318CE7;
     }
     .word-list li a.wrong{
         border: 1px solid red;
@@ -144,5 +179,10 @@
     .word-list li a.correct{
         border: 1px solid rgb(31, 235, 31);
         background-color: rgba(192, 255, 192, 0.815);
+    }
+    .word-list li a.disabled{
+        background-color: #f9f6f6;
+        border: 1px solid #e0e1e2;
+        color: #caced2;
     }
 </style>
