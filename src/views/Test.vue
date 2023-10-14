@@ -50,6 +50,17 @@
             }
         },
         methods:{
+            checkCorrect(){
+                if(this.second != null && this.first != null){
+                    if(this.second == this.first){
+                        let data = this.randomElements.find((b) => b.id == this.first);
+                        data.done=true;
+                        this.$emit('updateSuccess', data);
+                    }
+                    this.second = null;
+                    this.first = null;
+                }
+            },
             reload(){
                 window.location.reload();
             },
@@ -73,10 +84,7 @@
                         let firstEl = this.$refs['first-item-'+this.first];
                         firstEl[0].classList.add('correct');
                         firstEl[0].classList.remove('active');
-                        let first = this.first;
-                        let second = this.second;
-                        this.second = null;
-                        this.first = null;
+                        this.checkCorrect();
                         setTimeout(() => {
                             secondEl[0].classList.remove('correct');
                             secondEl[0].classList.remove('active');
@@ -92,8 +100,7 @@
                         let firstEl = this.$refs['first-item-'+this.first];
                         firstEl[0].classList.add('wrong');
                         firstEl[0].classList.remove('active');
-                        this.second = null;
-                        this.first = null;
+                        this.checkCorrect();
                         setTimeout(() => {
                             secondEl[0].classList.remove('wrong');
                             secondEl[0].classList.remove('active');
