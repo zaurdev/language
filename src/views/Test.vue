@@ -60,7 +60,7 @@
                 if(this.second != null && this.first != null){
                     if(this.second == this.first){
                         let data = this.randomElements.find((b) => b.id == this.first);
-                        data.done=true;
+                        data.done = true;
                         this.$emit('updateSuccess', data);
                     }
                     this.second = null;
@@ -83,35 +83,26 @@
             setSecond(el, index){
                 if(this.first){
                     this.second = el.id;
+                    let firstEl = this.$refs['first-item-'+this.first][0];
+                    let secondEl = this.$refs['second-item-'+this.second][0];
                     if(this.first == this.second){
-                        let secondEl = this.$refs['second-item-'+this.second];
-                        secondEl[0].classList.add('correct');
-                        secondEl[0].classList.remove('active');
-                        let firstEl = this.$refs['first-item-'+this.first];
-                        firstEl[0].classList.add('correct');
-                        firstEl[0].classList.remove('active');
                         this.checkCorrect();
+                        firstEl.classList.remove('active');
+                        firstEl.classList.add('correct');
+                        secondEl.classList.add('correct');
                         setTimeout(() => {
-                            secondEl[0].classList.remove('correct');
-                            secondEl[0].classList.remove('active');
-                            firstEl[0].classList.remove('correct');
-                            firstEl[0].classList.remove('active');
-                            firstEl[0].classList.add('disabled');
-                            secondEl[0].classList.add('disabled');
+                            firstEl.classList.remove('correct');
+                            secondEl.classList.remove('correct');
+                            firstEl.classList.add('disabled');
+                            secondEl.classList.add('disabled');
                         }, 300);
                     }else{
-                        let secondEl = this.$refs['second-item-'+this.second];
-                        secondEl[0].classList.add('wrong');
-                        secondEl[0].classList.remove('active');
-                        let firstEl = this.$refs['first-item-'+this.first];
-                        firstEl[0].classList.add('wrong');
-                        firstEl[0].classList.remove('active');
-                        this.checkCorrect();
+                        firstEl.classList.remove('active');
+                        firstEl.classList.add('wrong');
+                        secondEl.classList.add('wrong');
                         setTimeout(() => {
-                            secondEl[0].classList.remove('wrong');
-                            secondEl[0].classList.remove('active');
-                            firstEl[0].classList.remove('wrong');
-                            firstEl[0].classList.remove('active');
+                            firstEl.classList.remove('wrong');
+                            secondEl.classList.remove('wrong');
                         }, 300);
                     }
                 }

@@ -2,10 +2,10 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 mt-3">
-                <app-navbar />
+                <app-navbar @repeat="repeat"/>
             </div>
             <div class="col-lg-12 mt-3">
-                <router-view :randomElements="randomElements" @inputSubmit="addData($event)" :itemsForAdd="itemsForAdd"
+                <router-view :randomElements="itemsForRand" @inputSubmit="addData($event)" :itemsForAdd="itemsForAdd"
                     @deleteAdd="deleteDataAdd($event)" @updateSuccess="updateData($event)"/>
             </div>
         </div>
@@ -18,6 +18,7 @@ export default {
     data() {
         return {
             itemsForAdd: [],
+            itemsForRand: [],
         }
     },
     components: {
@@ -25,12 +26,25 @@ export default {
     },
     computed: {
         randomElements() {
-            let filtered = this.itemsForAdd.filter((e) => (!e.done) ? true : false);
-            const shuffledList = this.shuffleArray(filtered);
-            return shuffledList.slice(0, 7);
+            return this.itemsForRand;
         }
     },
     methods: {
+        generateRandomQuestions(){
+            let filtered = this.itemsForAdd.filter((e) => (!e.done) ? true : false);
+            const shuffledList = this.shuffleArray(filtered);
+            this.itemsForRand= shuffledList.slice(0, 7);
+        },
+        repeat(){
+            Object.keys(this.itemsForAdd).forEach((e) => {
+                this.itemsForAdd[e].done = false;
+                console.log(this.itemsForAdd[e].done);
+                this.updateData(this.itemsForAdd[e]);
+            });
+            setTimeout(() => {
+                window.location.reload();
+            }, 200)
+        },
         shuffleArray(array) {
             let shuffled = array.slice(0), i = array.length, temp, index;
             while (i-- > 0) {
@@ -99,6 +113,7 @@ export default {
                     cursor.continue();
                 } else {
                     this.itemsForAdd = result;
+                    this.generateRandomQuestions();
                 }
             };
         },
