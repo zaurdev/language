@@ -33,7 +33,7 @@ export default {
         generateRandomQuestions(){
             let filtered = this.itemsForAdd.filter((e) => (!e.done) ? true : false);
             const shuffledList = this.shuffleArray(filtered);
-            this.itemsForRand= shuffledList.slice(0, 7);
+            this.itemsForRand= shuffledList.slice(0, 6);
         },
         repeat(){
             Object.keys(this.itemsForAdd).forEach((e) => {
