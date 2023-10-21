@@ -16,8 +16,8 @@
                 </li>
             </ul>
         </div>
-        <div class="d-flex justify-content-center mt-5">
-            <div class="d-flex justify-content-center mt-5">
+        <div class="d-flex justify-content-center mt-1 mb-1">
+            <div class="d-flex justify-content-center mt-1 mb-1">
                 <button class="btn btn-primary mr-2 py-2 px-4" @click="refresh(); first = null; second = null;"> <i
                         class="fas fa-refresh mr-1"></i> Sıfırla</button>
                 <button class="btn btn-primary ml-2" @click.prevent="reload()"> <i class="fas fa-add mr-1"></i> Yeni
